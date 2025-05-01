@@ -4,14 +4,14 @@ import { toast } from 'react-hot-toast';
 import TimePicker from './TimePicker';
 
 const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
-  const [title, setTitle] = useState(todo.title);
+  const [title, setTitle] = useState(todo.title || '');
   const [description, setDescription] = useState(todo.description || '');
-  const [time, setTime] = useState(todo.due_time || '');  // Inisialisasi dengan waktu yang ada pada todo
-  const [date, setDate] = useState(todo.due_date || '');  // Tambahkan state untuk tanggal
-  const [categoryId, setCategoryId] = useState(todo.category_id);
+  const [time, setTime] = useState(todo.due_time || '');
+  const [date, setDate] = useState(todo.due_date || '');
+  const [priority, setPriority] = useState(todo.priority || 'medium');
+  const [categoryId, setCategoryId] = useState(todo.category_id || '');
   const [categories, setCategories] = useState([]);
 
-  // Ambil data kategori dari Supabase
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from('category').select('*');
@@ -25,43 +25,44 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
     fetchCategories();
   }, []);
 
-  // Fungsi untuk mengupdate todo dengan waktu dan tanggal yang baru
   const handleUpdateTodo = async (e) => {
     e.preventDefault();
 
-    // Pastikan waktu dan tanggal terisi
-    if (!time) {
-      toast.error('Waktu tidak boleh kosong!');
+    if (!todo.task_id) {
+      toast.error('ID Todo tidak tersedia!');
+      console.error('Missing task_id:', todo);
       return;
     }
 
-    if (!date) {
-      toast.error('Tanggal tidak boleh kosong!');
+    if (!title.trim()) {
+      toast.error('Judul tidak boleh kosong!');
       return;
     }
 
-    // Pastikan categoryId valid
-    if (!categoryId || categoryId === '') {
+    if (!date || !time) {
+      toast.error('Tanggal dan waktu harus diisi!');
+      return;
+    }
+
+    if (!categoryId) {
       toast.error('Kategori harus dipilih!');
       return;
     }
 
-    // Log data yang akan dikirim
-    console.log('Updating Todo:', { title, description, time, date, categoryId, todoId: todo.id });
-
     const { error } = await supabase
       .from('task')
-      .update({ 
-        title, 
-        description, 
-        due_time: time,  // Menyimpan waktu dalam format yang sesuai
-        due_date: date,  // Menyimpan tanggal dalam format yang sesuai
-        category_id: categoryId 
+      .update({
+        title,
+        description,
+        due_time: time,
+        due_date: date,
+        priority,
+        category_id: categoryId,
       })
-      .eq('id', todo.id);
+      .eq('task_id', todo.task_id);
 
     if (error) {
-      console.error('Error updating todo:', error);  // Log error Supabase
+      console.error('Error updating todo:', error);
       toast.error('Gagal update todo!');
     } else {
       toast.success('Todo berhasil diupdate!');
@@ -81,7 +82,9 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
             onChange={(e) => setTitle(e.target.value)}
             required
             className="w-full border px-3 py-2 rounded"
+            placeholder="Judul Todo"
           />
+
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -101,13 +104,18 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
             ))}
           </select>
 
-          {/* TimePicker untuk memilih waktu */}
-          <TimePicker
-            onTimeChange={setTime}
-            initialTime={time}
-          />
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="w-full border px-3 py-2 rounded"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
 
-          {/* Input untuk memilih tanggal */}
+          <TimePicker onTimeChange={setTime} initialTime={time} />
+
           <input
             type="date"
             value={date}
