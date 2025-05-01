@@ -36,13 +36,13 @@ const AppRouter = () => {
       <Routes>
         {/* Auth routes */}
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/home" />} />
-        <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/home" />} />
+        <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/login" />} />
 
         {/* Halaman Home dapat diakses tanpa login */}
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />
 
         {/* Protected routes */}
-        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* Default route */}
         <Route path="*" element={<Navigate to={user ? "/home" : "/login"} />} />

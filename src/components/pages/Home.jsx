@@ -56,8 +56,7 @@ const Home = () => {
       {/* Header tanpa tombol logout */}
       <header className="flex justify-between items-center mb-6">
         <div className="text-pink-500 text-xl font-bold flex items-center gap-2">
-          <img src="/assets/logo.svg" alt="Dojo" className="h-6" />
-          DoJo
+          <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
         </div>
         <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center font-semibold text-sm text-gray-800">
           SH

@@ -12,14 +12,26 @@ const SignUpForm = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      setError(error.message);
+  
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+  
+    if (signUpError) {
+      setError(signUpError.message);
     } else {
-      navigate('/login'); // Setelah signup sukses, arahkan ke login
+      // Logout paksa supaya tidak auto-login
+      await supabase.auth.signOut();
+      navigate('/login');
     }
   };
-
+  
   return (
     <form onSubmit={handleSignUp} className="signup-form">
       {error && <p className="error">{error}</p>}
