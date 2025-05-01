@@ -8,8 +8,9 @@ const AddTodoForm = ({ onTodoAdded }) => {
   const [priority, setPriority] = useState('medium');
   const [dueDate, setDueDate] = useState('');
   const [dueTime, setDueTime] = useState('');
-  const [description, setDescription] = useState(''); // New state for description
+  const [description, setDescription] = useState('');
   const [categories, setCategories] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   // Ambil kategori dari Supabase
   useEffect(() => {
@@ -20,7 +21,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
       } else {
         setCategories(data);
         if (data.length > 0) {
-          setCategoryId(data[0].category_id); // Pastikan kita set category_id, bukan id jika nama kolomnya category_id
+          setCategoryId(data[0].category_id);
         }
       }
     };
@@ -28,10 +29,19 @@ const AddTodoForm = ({ onTodoAdded }) => {
     fetchCategories();
   }, []);
 
-  // Log kategori yang dipilih
+  // Ambil user_id dari Supabase Auth
   useEffect(() => {
-    console.log("Selected categoryId: ", categoryId); // Log untuk memverifikasi categoryId
-  }, [categoryId]);
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
+        toast.error('Gagal mendapatkan user!');
+        return;
+      }
+      setUserId(data.user.id); // Supabase Auth user ID (UUID)
+    };
+
+    getUser();
+  }, []);
 
   // Fungsi untuk menambahkan todo
   const handleAddTodo = async (e) => {
@@ -53,39 +63,40 @@ const AddTodoForm = ({ onTodoAdded }) => {
       return;
     }
 
-    console.log("Submitting categoryId: ", categoryId); // Log nilai categoryId saat submit
+    if (!userId) {
+      toast.error('User belum login!');
+      return;
+    }
 
-    // Kirim data ke Supabase untuk menambahkan todo baru
     const { error } = await supabase
       .from('task')
       .insert([{
         title,
-        category_id: categoryId, // Pastikan ini UUID yang valid
+        category_id: categoryId,
         priority,
         due_date: dueDate,
         due_time: dueTime,
-        description // Menambahkan description ke dalam data yang disubmit
+        description,
+        user_id: userId, // Menambahkan user_id ke dalam record
       }]);
 
-    // Menangani error atau sukses
     if (error) {
-      console.error(error.message); // Log error lebih rinci
+      console.error(error.message);
       toast.error('Gagal menambahkan todo!');
     } else {
       toast.success('Todo berhasil ditambahkan!');
       setTitle('');
-      setCategoryId(categories.length > 0 ? categories[0].category_id : ''); // Menggunakan category_id
+      setCategoryId(categories.length > 0 ? categories[0].category_id : '');
       setPriority('medium');
       setDueDate('');
       setDueTime('');
-      setDescription(''); // Reset description after submit
+      setDescription('');
       if (onTodoAdded) onTodoAdded();
     }
   };
 
   return (
     <form onSubmit={handleAddTodo} className="add-todo-form space-y-4">
-      {/* Input untuk judul todo */}
       <input
         type="text"
         placeholder="Judul Todo"
@@ -95,7 +106,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         className="w-full border px-3 py-2 rounded"
       />
 
-      {/* Dropdown untuk memilih kategori */}
       <select
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
@@ -108,7 +118,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         ))}
       </select>
 
-      {/* Dropdown untuk memilih prioritas */}
       <select
         value={priority}
         onChange={(e) => setPriority(e.target.value)}
@@ -119,7 +128,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         <option value="high">High</option>
       </select>
 
-      {/* Input untuk memilih tanggal */}
       <input
         type="date"
         value={dueDate}
@@ -128,7 +136,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         className="w-full border px-3 py-2 rounded"
       />
 
-      {/* Input untuk memilih waktu */}
       <input
         type="time"
         value={dueTime}
@@ -137,7 +144,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         className="w-full border px-3 py-2 rounded"
       />
 
-      {/* Textarea untuk deskripsi todo */}
       <textarea
         placeholder="Deskripsi Todo"
         value={description}
@@ -145,7 +151,6 @@ const AddTodoForm = ({ onTodoAdded }) => {
         className="w-full border px-3 py-2 rounded"
       />
 
-      {/* Tombol untuk submit form */}
       <button
         type="submit"
         className="w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600"
