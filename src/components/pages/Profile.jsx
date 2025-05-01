@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { toast } from 'react-hot-toast';
@@ -15,30 +16,18 @@ const Profile = () => {
     const fetchProfile = async () => {
       const { data, error } = await supabase.auth.getUser();
       const user = data?.user;
-
+  
       if (error || !user) {
         toast.error('User tidak ditemukan');
         navigate('/login');
         return;
       }
-
+  
       setUserId(user.id);
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('full_name, email')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) {
-        toast.error('Gagal memuat profil');
-        return;
-      }
-
-      setName(profile.full_name || '');
-      setEmail(profile.email || '');
+      setName(user.user_metadata?.full_name || '');
+      setEmail(user.email || '');
     };
-
+  
     fetchProfile();
   }, [navigate]);
 
@@ -58,39 +47,34 @@ const Profile = () => {
       toast.error('User belum dimuat!');
       return;
     }
-
-    // Update profil
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ full_name: name, email })
-      .eq('id', userId);
-
-    if (updateError) {
-      toast.error('Gagal menyimpan perubahan');
-      return;
-    }
-
-    toast.success('Profil berhasil disimpan!');
-
-    // Update password jika ada
-    if (password) {
-      const { error: pwError } = await supabase.auth.updateUser({ password });
-      if (pwError) {
-        toast.error('Gagal memperbarui password');
+    
+      const { error } = await supabase.auth.updateUser({
+        email,
+        password: password || undefined, // hanya update jika ada password
+        data: {
+          full_name: name,
+        },
+      });
+    
+      if (error) {
+        toast.error('Gagal menyimpan perubahan');
       } else {
-        toast.success('Password berhasil diperbarui!');
+        toast.success('Profil berhasil diperbarui!');
       }
-    }
-  };
-
+    };
+    
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4">
-      <header className="flex justify-between items-center mb-6">
-        <div className="text-pink-500 text-xl font-bold flex items-center gap-2">
-          <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
-        </div>
+    <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-4">
+    <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
+      <Link to="/home">
+      <button
+        type="button"
+        className="text-pink-500 text-xl font-bold flex items-center gap-2">
+        <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
+      </button>
+      </Link>
         <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center font-semibold text-sm text-gray-800">
-          {name?.[0]?.toUpperCase() ?? 'U'}
+          {name?.[0]?.toUpperCase() ?? ''}
         </div>
       </header>
 
