@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { toast } from 'react-hot-toast';
@@ -47,7 +48,7 @@ const Profile = () => {
       return;
     }
     
-      const { data, error } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         email,
         password: password || undefined, // hanya update jika ada password
         data: {
@@ -63,11 +64,15 @@ const Profile = () => {
     };
     
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4">
-      <header className="flex justify-between items-center mb-6">
-        <div className="text-pink-500 text-xl font-bold flex items-center gap-2">
-          <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
-        </div>
+    <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-4">
+    <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
+      <Link to="/home">
+      <button
+        type="button"
+        className="text-pink-500 text-xl font-bold flex items-center gap-2">
+        <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
+      </button>
+      </Link>
         <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center font-semibold text-sm text-gray-800">
           {name?.[0]?.toUpperCase() ?? ''}
         </div>

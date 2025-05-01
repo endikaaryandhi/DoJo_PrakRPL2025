@@ -1,7 +1,6 @@
-// Home.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
-import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
 import AddTodoForm from '../Dashboard/AddTodoForm';
 import EditTodoModal from '../Dashboard/EditTodoModal';
@@ -27,15 +26,10 @@ const Home = () => {
 
     getUser();
     fetchCategories();
-  }, []);
+  }, [navigate]);
 
-  useEffect(() => {
-    if (user) {
-      fetchTodos();
-    }
-  }, [user]);
-
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
+    if (!user) return;
     setLoading(true);
     const { data, error } = await supabase
       .from('task')
@@ -49,7 +43,11 @@ const Home = () => {
     }
 
     setLoading(false);
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchTodos();
+  }, [fetchTodos]);
 
   const fetchCategories = async () => {
     const { data, error } = await supabase.from('category').select('*');
@@ -69,31 +67,38 @@ const Home = () => {
       toast.error('Gagal menghapus todo!');
     } else {
       toast.success('Todo berhasil dihapus!');
-      fetchTodos();
+      fetchTodos(); // Perbarui daftar todo
     }
   };
 
-  const getUserName = () => {
-    if (!user) return 'Pengguna';
-    return user.user_metadata?.name || user.email;
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4">
+    <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-4">
       <Toaster />
 
-      <header className="flex justify-between items-center mb-6">
+      <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
         <div className="text-pink-500 text-xl font-bold flex items-center gap-2">
-          <img src="/assets/logo.svg" alt="Dojo" className="h-6" />
-          DoJo
+          <img src="/assets/logo.svg" alt="Dojo" className="h-10" />
         </div>
-        <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center font-semibold text-sm text-gray-800">
-          {getUserName().slice(0, 2).toUpperCase()}
-        </div>
+        <Link to="/profile">
+          <button type="button"
+            className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center font-semibold text-sm text-gray-800"
+          >
+            {(() => {
+              const name = user?.user_metadata?.full_name;
+              if (name) {
+                const parts = name.trim().split(' ');
+                return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
+              }
+              return (user?.email?.slice(0, 2) || 'PU').toUpperCase();
+            })()}
+          </button>
+        </Link>
       </header>
 
       <section className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Halo, {getUserName()}!</h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Halo, {user?.user_metadata?.full_name || user?.email || 'Pengguna'}!
+        </h1>
         <p className="text-gray-500">
           Hari ini, {new Date().toLocaleDateString('id-ID', {
             weekday: 'long',
