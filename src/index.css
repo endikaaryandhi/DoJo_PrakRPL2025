@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-page, .signup-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #74ebd5, #acb6e5, #fbc2eb, #f6d365);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+.login-container, .signup-container {
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 30px;
+  height: 500px; /* Tetapkan tinggi tetap */
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.login-container h2, .signup-container h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.login-container p, .signup-container p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.google-login, .google-login:hover {
+  background: #e8f0fe;
+  border-radius: 30px;
+  padding: 12px;
+  width: 100%;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.google-login:hover, .google-signup:hover { background: #d2e3fc; }
+
+.divider {
+  margin: 20px 0;
+  position: relative;
+  text-align: center;
+}
+
+.divider::before, .divider::after {
+  content: "";
+  height: 1px;
+  background: #ccc;
+  position: absolute;
+  top: 50%;
+  width: 40%;
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* Perbaruan dimulai di sini */
+.login-form, .signup-form {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+/* Perbaruan berakhir di sini */
+
+.login-form input, .signup-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #f5f7fa;
+}
+
+.login-form button, .signup-form button {
+  width: 100%;
+  background-color: #1c1c1c;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-form button:hover, .signup-form button:hover {
+  background-color: #333;
+}
+
+footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.skewed-white {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60vh;
+  background: white;
+  clip-path: polygon(0 20%, 100% 0%, 100% 100%, 0 100%);
+  z-index: 0;
+}
