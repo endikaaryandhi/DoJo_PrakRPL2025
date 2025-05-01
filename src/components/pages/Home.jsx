@@ -6,22 +6,20 @@ import AddTodoForm from '../Dashboard/AddTodoForm';
 import EditTodoModal from '../Dashboard/EditTodoModal';
 import LoadingSpinner from '../LoadingSpinner';
 
-const categories = ['Kerjaan', 'Personal', 'Lainnya'];
-
 const Home = () => {
   const [todos, setTodos] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTodo, setSelectedTodo] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchTodos(); // Ambil semua todos tanpa filter
+    fetchTodos();
+    fetchCategories();
   }, []);
 
   const fetchTodos = async () => {
     setLoading(true);
-
-    // Ambil semua data todo tanpa filter tanggal
     const { data, error } = await supabase
       .from('task')
       .select('*, category(name)');
@@ -35,6 +33,15 @@ const Home = () => {
     setLoading(false);
   };
 
+  const fetchCategories = async () => {
+    const { data, error } = await supabase.from('category').select('*');
+    if (error) {
+      toast.error('Gagal mengambil kategori!');
+    } else {
+      setCategories(data);
+    }
+  };
+
   const handleDeleteTodo = async (id) => {
     const confirmDelete = window.confirm('Yakin ingin menghapus todo ini?');
     if (!confirmDelete) return;
@@ -45,7 +52,7 @@ const Home = () => {
       toast.error('Gagal menghapus todo!');
     } else {
       toast.success('Todo berhasil dihapus!');
-      fetchTodos(); // panggil ulang untuk refresh
+      fetchTodos();
     }
   };
 
@@ -53,7 +60,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50 px-6 py-4">
       <Toaster />
 
-      {/* Header tanpa tombol logout */}
+      {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <div className="text-pink-500 text-xl font-bold flex items-center gap-2">
           <img src="/assets/logo.svg" alt="Dojo" className="h-6" />
@@ -72,7 +79,7 @@ const Home = () => {
 
       {/* Form Tambah Todo */}
       <section className="mb-6">
-        <AddTodoForm onTodoAdded={fetchTodos} />
+        <AddTodoForm onTodoAdded={fetchTodos} categories={categories} />
       </section>
 
       {/* Todo List per Kategori */}
@@ -82,17 +89,15 @@ const Home = () => {
         <section className="space-y-6">
           {categories.map((category) => {
             const filteredTodos = todos.filter(
-              (todo) => todo.category?.name === category
+              (todo) => todo.category?.name === category.name
             );
 
             return (
-              <div key={category}>
+              <div key={category.id}>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-700">
-                    {category}{' '}
-                    <span className="text-sm text-gray-400">
-                      ^ {filteredTodos.length}
-                    </span>
+                    {category.name}{' '}
+                    <span className="text-sm text-gray-400">^ {filteredTodos.length}</span>
                   </h3>
                   <hr className="flex-grow ml-2 border-gray-200" />
                 </div>
@@ -102,38 +107,43 @@ const Home = () => {
                     {filteredTodos.map((todo) => (
                       <li
                         key={todo.id}
-                        className="flex items-center gap-3 bg-gray-100 px-4 py-2 rounded-lg"
+                        className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-sm"
                       >
-                        <input type="checkbox" />
-                        <span className="flex-grow font-medium">{todo.title}</span>
-                        {todo.category?.name && (
-                          <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded">
-                            {todo.category.name}
-                          </span>
-                        )}
-                        {todo.priority && (
-                          <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">
-                            {todo.priority}
-                          </span>
-                        )}
-                        {todo.date && (
-                          <span className="text-sm text-gray-500">{todo.date}</span>
-                        )}
-                        {todo.time && (
-                          <span className="text-sm text-gray-500">{todo.time}</span>
-                        )}
-                        <button
-                          onClick={() => setSelectedTodo(todo)}
-                          className="bg-sky-500 text-white px-3 py-1 rounded hover:bg-sky-600 text-sm"
-                        >
-                          ✏️ Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTodo(todo.id)}
-                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
-                        >
-                          🗑️ Hapus
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <input type="checkbox" className="w-4 h-4" />
+                          <span className="text-sm font-medium text-gray-800">{todo.title}</span>
+                          {todo.category?.name && (
+                            <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-semibold capitalize">
+                              {todo.category.name}
+                            </span>
+                          )}
+                          {todo.priority && (
+                            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md font-semibold capitalize">
+                              {todo.priority}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                          {todo.date && (
+                            <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.date}</span>
+                          )}
+                          {todo.time && (
+                            <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.time}</span>
+                          )}
+                          <button
+                            onClick={() => setSelectedTodo(todo)}
+                            className="bg-sky-500 hover:bg-sky-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTodo(todo.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                          >
+                            🗑️ Hapus
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>

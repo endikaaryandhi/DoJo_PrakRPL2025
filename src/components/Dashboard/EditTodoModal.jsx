@@ -6,7 +6,8 @@ import TimePicker from './TimePicker';
 const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description || '');
-  const [time, setTime] = useState(todo.time || '');  // Inisialisasi dengan waktu yang ada pada todo
+  const [time, setTime] = useState(todo.due_time || '');  // Inisialisasi dengan waktu yang ada pada todo
+  const [date, setDate] = useState(todo.due_date || '');  // Tambahkan state untuk tanggal
   const [categoryId, setCategoryId] = useState(todo.category_id);
   const [categories, setCategories] = useState([]);
 
@@ -24,22 +25,43 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
     fetchCategories();
   }, []);
 
-  // Fungsi untuk mengupdate todo dengan waktu yang baru
+  // Fungsi untuk mengupdate todo dengan waktu dan tanggal yang baru
   const handleUpdateTodo = async (e) => {
     e.preventDefault();
 
-    // Pastikan waktu terisi
+    // Pastikan waktu dan tanggal terisi
     if (!time) {
       toast.error('Waktu tidak boleh kosong!');
       return;
     }
 
+    if (!date) {
+      toast.error('Tanggal tidak boleh kosong!');
+      return;
+    }
+
+    // Pastikan categoryId valid
+    if (!categoryId || categoryId === '') {
+      toast.error('Kategori harus dipilih!');
+      return;
+    }
+
+    // Log data yang akan dikirim
+    console.log('Updating Todo:', { title, description, time, date, categoryId, todoId: todo.id });
+
     const { error } = await supabase
       .from('task')
-      .update({ title, description, time, category_id: categoryId })
+      .update({ 
+        title, 
+        description, 
+        due_time: time,  // Menyimpan waktu dalam format yang sesuai
+        due_date: date,  // Menyimpan tanggal dalam format yang sesuai
+        category_id: categoryId 
+      })
       .eq('id', todo.id);
 
     if (error) {
+      console.error('Error updating todo:', error);  // Log error Supabase
       toast.error('Gagal update todo!');
     } else {
       toast.success('Todo berhasil diupdate!');
@@ -73,7 +95,7 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
             className="w-full border px-3 py-2 rounded"
           >
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+              <option key={cat.category_id} value={cat.category_id}>
                 {cat.name}
               </option>
             ))}
@@ -81,8 +103,16 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
 
           {/* TimePicker untuk memilih waktu */}
           <TimePicker
-            onTimeChange={setTime}  // Pastikan waktu diubah dengan benar
-            initialTime={time}  // Inisialisasi dengan waktu yang ada
+            onTimeChange={setTime}
+            initialTime={time}
+          />
+
+          {/* Input untuk memilih tanggal */}
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full border px-3 py-2 rounded"
           />
 
           <div className="flex justify-end gap-2">
