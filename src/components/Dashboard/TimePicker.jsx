@@ -1,21 +1,22 @@
-// src/components/Dashboard/TimePicker.jsx
 import { useState } from 'react';
 
-const TimePicker = ({ onTimeChange, initialTime = '' }) => {
-    const [selectedTime, setSelectedTime] = useState(initialTime);
-  
-    const handleChange = (e) => {
-      const time = e.target.value;
-      setSelectedTime(time);
-      onTimeChange(time);
-    };
-  
-    return (
-      <div className="time-picker">
-        <label>Waktu:</label>
-        <input type="time" value={selectedTime} onChange={handleChange} />
-      </div>
-    );
+const TimePicker = ({ onTimeChange, initialTime }) => {
+  const [time, setTime] = useState(initialTime);
+
+  const handleChange = (e) => {
+    const newTime = e.target.value;
+    setTime(newTime);
+    onTimeChange(newTime);  // Kirim waktu yang dipilih ke parent
   };
+
+  return (
+    <input
+      type="time"
+      value={time}
+      onChange={handleChange}
+      className="w-full border px-3 py-2 rounded"
+    />
+  );
+};
 
 export default TimePicker;

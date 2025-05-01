@@ -1,4 +1,3 @@
-// src/router/AppRouter.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
@@ -39,8 +38,10 @@ const AppRouter = () => {
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/home" />} />
         <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/home" />} />
 
+        {/* Halaman Home dapat diakses tanpa login */}
+        <Route path="/home" element={<Home />} />
+
         {/* Protected routes */}
-        <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />
         <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
 
         {/* Default route */}
