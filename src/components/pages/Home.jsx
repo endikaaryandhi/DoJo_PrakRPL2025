@@ -1,4 +1,3 @@
-// Home.jsx
 import { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -69,7 +68,7 @@ const Home = () => {
       toast.error('Gagal menghapus todo!');
     } else {
       toast.success('Todo berhasil dihapus!');
-      fetchTodos();
+      fetchTodos(); // Memperbarui daftar todos setelah penghapusan
     }
   };
 
@@ -173,7 +172,7 @@ const Home = () => {
                             ✏️ Edit
                           </button>
                           <button
-                            onClick={() => handleDeleteTodo(todo.task_id)}
+                            onClick={() => handleDeleteTodo(todo.task_id)} // Mengirimkan task_id untuk penghapusan
                             className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
                           >
                             🗑️ Hapus
