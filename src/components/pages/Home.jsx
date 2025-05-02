@@ -5,6 +5,8 @@ import { Toaster, toast } from 'react-hot-toast';
 import AddTodoForm from '../Dashboard/AddTodoForm';
 import EditTodoModal from '../Dashboard/EditTodoModal';
 import LoadingSpinner from '../LoadingSpinner';
+import DeleteConfirmationModal from '../DeleteConfirmationModal';
+import TaskDetailModal from '../TaskDetailModal'; // ← Import detail modal
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -12,9 +14,11 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTodo, setSelectedTodo] = useState(null);
+  const [selectedTaskDetail, setSelectedTaskDetail] = useState(null); // ← State untuk detail task
   const [sortOrder, setSortOrder] = useState('none');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [hiddenCategories, setHiddenCategories] = useState(new Set()); // State for hidden categories
+  const [hiddenCategories, setHiddenCategories] = useState(new Set());
+  const [todoToDelete, setTodoToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,17 +65,18 @@ const Home = () => {
     }
   };
 
-  const handleDeleteTodo = async (task_id) => {
-    const confirmDelete = window.confirm('Yakin ingin menghapus todo ini?');
-    if (!confirmDelete) return;
+  const confirmDeleteTodo = async () => {
+    if (!todoToDelete) return;
 
-    const { error } = await supabase.from('task').delete().eq('task_id', task_id);
+    const { error } = await supabase.from('task').delete().eq('task_id', todoToDelete);
     if (error) {
       toast.error('Gagal menghapus todo!');
     } else {
       toast.success('Todo berhasil dihapus!');
       fetchTodos();
     }
+
+    setTodoToDelete(null);
   };
 
   const handleCheckboxChange = async (taskId, currentStatus) => {
@@ -94,9 +99,9 @@ const Home = () => {
     setHiddenCategories((prev) => {
       const newHiddenCategories = new Set(prev);
       if (newHiddenCategories.has(categoryName)) {
-        newHiddenCategories.delete(categoryName); // Show category
+        newHiddenCategories.delete(categoryName);
       } else {
-        newHiddenCategories.add(categoryName); // Hide category
+        newHiddenCategories.add(categoryName);
       }
       return newHiddenCategories;
     });
@@ -110,6 +115,12 @@ const Home = () => {
     if (sortOrder === 'asc') return aPriority - bPriority;
     if (sortOrder === 'desc') return bPriority - aPriority;
     return 0;
+  };
+
+
+
+  const handleShowTaskDetail = (task) => {
+    setSelectedTaskDetail(task); // Menetapkan task yang dipilih untuk ditampilkan di modal detail
   };
 
   return (
@@ -155,7 +166,6 @@ const Home = () => {
         <AddTodoForm onTodoAdded={fetchTodos} categories={categories} userId={user?.id} />
 
         <div className="mt-2 flex justify-between items-center flex-wrap gap-2">
-          {/* Kiri: Filter Status */}
           <div className="flex items-center gap-3">
             <select
               value={statusFilter}
@@ -167,7 +177,6 @@ const Home = () => {
               <option value="completed">Selesai</option>
             </select>
 
-            {/* Sort Dropdown */}
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
@@ -179,7 +188,6 @@ const Home = () => {
             </select>
           </div>
 
-          {/* Kanan: Jumlah Tugas */}
           <div className="ml-auto w-fit bg-[#a5d8e1] text-white text-sm font-medium px-4 py-1 rounded-full shadow">
             Tugas : {todos.length}
           </div>
@@ -215,13 +223,19 @@ const Home = () => {
                 {!hiddenCategories.has(category.name) && filteredTodos.length > 0 && (
                   <ul className="space-y-3">
                     {filteredTodos.map((todo) => (
-                      <li key={todo.task_id} className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-sm">
+                      <li
+                        key={todo.task_id}
+                        className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50"
+                      >
                         <div className="flex items-center gap-3">
                           <input
                             type="checkbox"
                             className="w-4 h-4"
                             checked={todo.status === 'completed'}
-                            onChange={() => handleCheckboxChange(todo.task_id, todo.status)}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(todo.task_id, todo.status);
+                            }}
                           />
 
                           <span className={`text-sm font-medium ${todo.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-800'}`}>
@@ -248,8 +262,21 @@ const Home = () => {
                           {todo.due_time && (
                             <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.due_time}</span>
                           )}
+
+                           {/* Task Detail Button */}
                           <button
-                            onClick={() =>
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShowTaskDetail(todo); // Menampilkan modal detail tugas
+                            }}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                          >
+                            📋 Detail
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedTodo({
                                 task_id: todo.task_id,
                                 title: todo.title,
@@ -258,14 +285,19 @@ const Home = () => {
                                 due_time: todo.due_time,
                                 priority: todo.priority,
                                 category_id: todo.category_id || todo.category?.category_id,
-                              })
-                            }
+                              });
+                            }}
                             className="bg-sky-500 hover:bg-sky-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
                           >
                             ✏ Edit
                           </button>
+
+                          {/* Delete Button */}
                           <button
-                            onClick={() => handleDeleteTodo(todo.task_id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTodoToDelete(todo.task_id);
+                            }}
                             className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
                           >
                             🗑 Hapus
@@ -281,11 +313,27 @@ const Home = () => {
         </section>
       )}
 
+      {/* Modal Edit */}
       {selectedTodo && (
         <EditTodoModal
           todo={selectedTodo}
           onClose={() => setSelectedTodo(null)}
           onTodoUpdated={fetchTodos}
+        />
+      )}
+
+      {/* Modal Hapus */}
+      <DeleteConfirmationModal
+        isOpen={!!todoToDelete}
+        onClose={() => setTodoToDelete(null)}
+        onConfirm={confirmDeleteTodo}
+      />
+
+       {/* Modal Detail */}
+       {selectedTaskDetail && (
+        <TaskDetailModal
+          task={selectedTaskDetail}
+          onClose={() => setSelectedTaskDetail(null)}
         />
       )}
     </div>

@@ -72,70 +72,91 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
   };
 
   return (
-    <div className="modal-backdrop fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="modal bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4">Edit Todo</h2>
-        <form onSubmit={handleUpdateTodo} className="space-y-4">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Judul Todo"
-          />
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-6 flex items-center gap-2">
+          ✏️ Edit Todo
+        </h2>
+        <form onSubmit={handleUpdateTodo} className="space-y-5 text-sm">
+          <div>
+            <label className="block text-gray-600 mb-1">Judul</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+              placeholder="Judul Todo"
+            />
+          </div>
 
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Deskripsi (opsional)"
-            className="w-full border px-3 py-2 rounded"
-          />
+          <div>
+            <label className="block text-gray-600 mb-1">Deskripsi</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Deskripsi (opsional)"
+              className="w-full border border-gray-300 px-4 py-2 rounded-lg resize-none focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+              rows={3}
+            />
+          </div>
 
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            {categories.map((cat) => (
-              <option key={cat.category_id} value={cat.category_id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-
-          <TimePicker onTimeChange={setTime} initialTime={time} />
-
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          <div>
+            <label className="block text-gray-600 mb-1">Kategori</label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
             >
-              Simpan
-            </button>
+              {categories.map((cat) => (
+                <option key={cat.category_id} value={cat.category_id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-600 mb-1">Prioritas</label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-600 mb-1">Waktu</label>
+            <TimePicker onTimeChange={setTime} initialTime={time} />
+          </div>
+
+          <div>
+            <label className="block text-gray-600 mb-1">Tanggal</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
             >
               Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+            >
+              Simpan
             </button>
           </div>
         </form>
