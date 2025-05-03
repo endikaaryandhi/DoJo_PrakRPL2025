@@ -2,6 +2,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SignUpForm from '../Auth/SignUpForm';
+import { supabase } from '../../utils/supabaseClient';
+
+const handleGoogleLogin = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'http://localhost:3000/home', // Ganti dengan URL deployment kamu kalau online
+    },
+  });
+
+  if (error) {
+    console.error('Google login error:', error.message);
+  }
+};
 
 const SignUp = () => {
   return (
@@ -25,10 +39,11 @@ const SignUp = () => {
         <p className="text-gray-500 text-sm mb-6">Cara Mudah untuk Mengatur To-do List Kamu</p>
 
         {/* Google Sign Up */}
-        <button className="flex items-center justify-center gap-2 w-full bg-blue-100 text-gray-700 font-medium py-3 rounded-full mb-6 hover:bg-blue-200 transition">
-          <img src="/assets/google.svg" alt="Google" className="w-5 h-5" />
-          Daftar dengan Google
-        </button>
+        <button onClick={handleGoogleLogin}
+        className="flex items-center justify-center gap-2 w-full bg-blue-100 text-gray-700 font-medium py-3 rounded-full mb-6 hover:bg-blue-200 transition">
+        <img src="/assets/google.svg" alt="Google" className="w-5 h-5" />
+        Daftar dengan Google
+      </button>
 
         {/* Separator */}
         <div className="flex items-center justify-center mb-6">

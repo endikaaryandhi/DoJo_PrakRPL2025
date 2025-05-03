@@ -2,8 +2,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../Auth/LoginForm';
+import { supabase } from '../../utils/supabaseClient';
 
+const handleGoogleLogin = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'http://localhost:3000/home', // Ganti dengan URL deployment kamu kalau online
+    },
+  });
 
+  if (error) {
+    console.error('Google login error:', error.message);
+  }
+};
 const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-300 via-purple-300 to-yellow-300 flex items-center justify-center p-4 relative">
@@ -26,10 +38,11 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-gray-800 mb-2">Login</h2>
         <p className="text-gray-500 text-sm mb-6">Cara Mudah untuk Mengatur To-do List Kamu</p>
 
-        <button className="flex items-center justify-center gap-2 w-full bg-blue-100 text-gray-700 font-medium py-3 rounded-full mb-6 hover:bg-blue-200 transition">
-          <img src="/assets/google.svg" alt="Google" className="w-5 h-5" />
-          Login dengan Google
-        </button>
+        <button onClick={handleGoogleLogin}
+        className="flex items-center justify-center gap-2 w-full bg-blue-100 text-gray-700 font-medium py-3 rounded-full mb-6 hover:bg-blue-200 transition">
+        <img src="/assets/google.svg" alt="Google" className="w-5 h-5" />
+        Login dengan Google
+      </button>
 
         <div className="flex items-center justify-center mb-6">
           <hr className="flex-grow border-t border-gray-300" />
