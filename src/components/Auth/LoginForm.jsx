@@ -1,7 +1,7 @@
-// src/components/Auth/LoginForm.jsx
 import { useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import '../../index.css';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -12,13 +12,20 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
       console.log('Login error:', error); // Log error dari Supabase
-      setError(error.message);
+
+      // Cek apakah error terkait email atau password yang salah
+      if (error.message.includes('Invalid login credentials')) {
+        setError('Email atau password salah. Silakan coba lagi.');
+      } else {
+        setError(error.message); // Menampilkan error lainnya dari Supabase
+      }
     } else {
-      navigate('/home'); // redirect ke home setelah login
+      navigate('/home'); // Redirect ke home setelah login berhasil
     }
-  };  
+  };
 
   return (
     <form onSubmit={handleLogin} className="login-form">

@@ -134,3 +134,13 @@ footer {
   clip-path: polygon(0 20%, 100% 0%, 100% 100%, 0 100%);
   z-index: 0;
 }
+
+.error {
+  color: #d9534f; 
+  background-color: #f2dede; 
+  border: 1px solid #d9534f; 
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
