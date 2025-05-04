@@ -67,7 +67,7 @@ const Login = () => {
       <div className="w-full flex justify-between items-center p-6 absolute top-0 z-10">
         <img src="/assets/log.svg" alt="Dojo Logo" className="w-25 h-25" />
         <Link to="/signup">
-        <button className="bg-white text-black border border-black px-4 py-2 rounded-md shadow-lg hover:bg-black hover:text-white transition">
+        <button className="border border-black px-4 py-2 rounded-md hover:bg-black hover:text-white transition">
         DAFTAR
           </button>
         </Link>
