@@ -1,5 +1,5 @@
 // src/pages/SignUp.jsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import SignUpForm from '../Auth/SignUpForm';
 import { supabase } from '../../utils/supabaseClient';
@@ -18,17 +18,60 @@ const handleGoogleLogin = async () => {
 };
 
 const SignUp = () => {
+  useEffect(() => {
+      const script = document.createElement('script');
+      script.src = './FinisherHeader.js';
+      script.async = true;
+      script.onload = () => {
+        if (window.FinisherHeader) {
+          new window.FinisherHeader({
+            count: 12,
+            size: { min: 1300, max: 1500, pulse: 0 },
+            speed: {
+              x: { min: 0.6, max: 3 },
+              y: { min: 0.6, max: 3 },
+            },
+            colors: {
+              background: "#7d3bce",
+              particles: [ "#e07b49",
+                "#27a4d4",
+                "#1efedc",
+                "#d6275b"],
+            },
+            blending: "overlay",
+            opacity: { center: 0.6, edge: 0 },
+            skew: 1,
+            shapes: ["c"],
+          });
+        }
+      };
+      document.body.appendChild(script);
+    }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-300 via-purple-300 to-yellow-300 flex items-center justify-center p-4 relative">
-      {/* Background putih miring di bawah */}
-      <div className="skewed-white"></div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+      <div
+        className="finisher-header"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '56vh',
+          zIndex: -1,
+          transform: 'skewY(-5deg)',
+          transformOrigin: 'top left',
+          overflow: 'hidden',
+        }}
+      />
 
       {/* Header */}
       <div className="w-full flex justify-between items-center p-6 absolute top-0 z-10">
         <img src="/assets/log.svg" alt="Dojo Logo" className="w-25 h-25" />
         <Link to="/login">
-        <button className="border border-black px-4 py-2 rounded-md hover:bg-black hover:text-white transition">
-          MASUK
+        <button className="bg-white text-black border border-black px-4 py-2 rounded-md shadow-lg hover:bg-black hover:text-white transition">
+        MASUK
         </button>
         </Link>
       </div>
