@@ -12,7 +12,7 @@ const TaskDetailModal = ({ task, onClose }) => {
     >
       <Dialog.Panel className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-xl transform transition-all">
         <Dialog.Title className="text-2xl font-semibold text-indigo-600 mb-4 border-b pb-2">
-          📋 Detail Tugas
+          📋 Detail Todo
         </Dialog.Title>
 
         <div className="space-y-3 text-sm text-gray-700">
