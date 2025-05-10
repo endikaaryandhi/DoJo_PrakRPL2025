@@ -17,7 +17,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from('category').select('*');
       if (error) {
-        toast.error('Gagal mengambil kategori!');
+        toast.error('Failed to take category!');
       } else {
         setCategories(data);
         if (data.length > 0) {
@@ -32,7 +32,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data.user) {
-        toast.error('Gagal mendapatkan user!');
+        toast.error('Failed to get user!');
         return;
       }
       setUserId(data.user.id);
@@ -43,19 +43,19 @@ const AddTodoForm = ({ onTodoAdded }) => {
   const handleAddTodo = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
-      toast.error('Judul tidak boleh kosong!');
+      toast.error('Title cannot be empty!');
       return;
     }
     if (!dueDate || !dueTime) {
-      toast.error('Tanggal dan waktu harus dipilih!');
+      toast.error('Date and time must be selected!');
       return;
     }
     if (!categoryId || categoryId === '') {
-      toast.error('Kategori harus dipilih!');
+      toast.error('Category must be selected!');
       return;
     }
     if (!userId) {
-      toast.error('User belum login!');
+      toast.error('User is not logged in!');
       return;
     }
 
@@ -71,9 +71,9 @@ const AddTodoForm = ({ onTodoAdded }) => {
 
     if (error) {
       console.error(error.message);
-      toast.error('Gagal menambahkan todo!');
+      toast.error('Failed to add todo!');
     } else {
-      toast.success('Todo berhasil ditambahkan!');
+      toast.success('Todo successfully added!');
       setTitle('');
       setCategoryId(categories.length > 0 ? categories[0].category_id : '');
       setPriority('medium');
@@ -89,7 +89,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
     <form onSubmit={handleAddTodo} className="flex flex-wrap gap-2 mb-4 items-center">
       <input
         type="text"
-        placeholder="Tambahkan Tugas Baru"
+        placeholder="Add New Task"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -99,7 +99,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Deskripsi"
+        placeholder="Description"
         className="flex-1 min-w-[150px] h-8 px-2 py-1 border rounded text-sm" // Set height to 5rem (adjustable)
       />
 
@@ -109,7 +109,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
         onChange={(e) => setDueDate(e.target.value)}
         required
         className="flex-1 min-w-[120px] px-2 py-1 border rounded text-sm"
-        placeholder="Pilih Tanggal"
+        placeholder="Select Date"
       />
 
       <input
@@ -118,7 +118,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
         onChange={(e) => setDueTime(e.target.value)}
         required
         className="flex-1 min-w-[100px] px-2 py-1 border rounded text-sm"
-        placeholder="Pilih Waktu"
+        placeholder="Select Time"
       />
 
       <select
@@ -140,9 +140,9 @@ const AddTodoForm = ({ onTodoAdded }) => {
         className="flex-1 min-w-[120px] px-2 py-1 border rounded text-sm"
       >
         <option value="" disabled selected>Pilih Prioritas</option>
-        <option value="high">Tinggi</option>
-        <option value="medium">Sedang</option>
-        <option value="low">Rendah</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
       </select>
 
       {!isAdding ? (
@@ -151,7 +151,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
           onClick={() => setIsAdding(true)}
           className="flex-1 min-w-[120px] bg-pink-500 hover:bg-pink-600 text-white px-2 py-1 rounded text-sm"
         >
-          + Tambah
+          + Add
         </button>
       ) : (
         <div className="flex gap-2">

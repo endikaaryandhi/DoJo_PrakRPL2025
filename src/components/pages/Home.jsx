@@ -44,7 +44,7 @@ const Home = () => {
       .eq('user_id', user.id);
 
     if (error) {
-      toast.error('Gagal mengambil data todo!');
+      toast.error('Failed to fetch todo data!');
     } else {
       setTodos(data);
     }
@@ -59,7 +59,7 @@ const Home = () => {
   const fetchCategories = async () => {
     const { data, error } = await supabase.from('category').select('*');
     if (error) {
-      toast.error('Gagal mengambil kategori!');
+      toast.error('Failed to pick up the category!');
     } else {
       setCategories(data);
     }
@@ -70,9 +70,9 @@ const Home = () => {
 
     const { error } = await supabase.from('task').delete().eq('task_id', todoToDelete);
     if (error) {
-      toast.error('Gagal menghapus todo!');
+      toast.error('Failed to delete todo!');
     } else {
-      toast.success('Todo berhasil dihapus!');
+      toast.success('Todo was successfully deleted!');
       fetchTodos();
     }
 
@@ -88,9 +88,9 @@ const Home = () => {
       .eq('task_id', taskId);
 
     if (error) {
-      toast.error(`Gagal memperbarui status todo! Error: ${error.message}`);
+      toast.error(`Failed to update the todo status! Error: ${error.message}`);
     } else {
-      toast.success('Status todo berhasil diperbarui!');
+      toast.success('Todo status successfully updated!');
       fetchTodos();
     }
   };
@@ -152,7 +152,7 @@ const Home = () => {
           Halo, {user?.user_metadata?.full_name || user?.email || 'Pengguna'}!
         </h1>
         <p className="text-gray-500">
-          Hari ini, {new Date().toLocaleDateString('id-ID', {
+          Today, {new Date().toLocaleDateString('en-US', {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
@@ -172,9 +172,9 @@ const Home = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer"
             >
-              <option value="all">Semua</option>
-              <option value="pending">Belum Selesai</option>
-              <option value="completed">Selesai</option>
+              <option value="all">All</option>
+              <option value="in progress">In Progress</option>
+              <option value="completed">Done</option>
             </select>
 
             <select
@@ -182,14 +182,14 @@ const Home = () => {
               onChange={(e) => setSortOrder(e.target.value)}
               className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer"
             >
-              <option value="none">Urutkan: Default</option>
-              <option value="asc">Prioritas: High → Low</option>
-              <option value="desc">Prioritas: Low → High</option>
+              <option value="none">Sort: Default</option>
+              <option value="asc">Priority: High → Low</option>
+              <option value="desc">Priority: Low → High</option>
             </select>
           </div>
 
           <div className="ml-auto w-fit bg-[#a5d8e1] text-white text-sm font-medium px-4 py-1 rounded-full shadow">
-            Tugas : {todos.length}
+            To-Do : {todos.length}
           </div>
         </div>
       </section>

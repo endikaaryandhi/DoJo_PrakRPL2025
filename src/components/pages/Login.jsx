@@ -68,7 +68,7 @@ const Login = () => {
         <img src="/assets/log.svg" alt="Dojo Logo" className="w-25 h-25" />
         <Link to="/signup">
         <button className="border border-black px-4 py-2 rounded-md hover:bg-black hover:text-white transition">
-        DAFTAR
+        SIGN UP
           </button>
         </Link>
       </div>
@@ -76,17 +76,17 @@ const Login = () => {
       {/* Kontainer utama login */}
       <div className="signup-container bg-white rounded-3xl shadow-lg p-8 max-w-md w-full text-center z-10 relative">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">Login</h2>
-        <p className="text-gray-500 text-sm mb-6">Cara Mudah untuk Mengatur To-do List Kamu</p>
+        <p className="text-gray-500 text-sm mb-6">Easy Ways to Organize Your To-do List</p>
 
         <button onClick={handleGoogleLogin}
         className="flex items-center justify-center gap-2 w-full bg-blue-100 text-gray-700 font-medium py-3 rounded-full mb-6 hover:bg-blue-200 transition">
         <img src="/assets/google.svg" alt="Google" className="w-5 h-5" />
-        Login dengan Google
+        Login with Google
       </button>
 
         <div className="flex items-center justify-center mb-6">
           <hr className="flex-grow border-t border-gray-300" />
-          <span className="mx-3 text-gray-400 text-sm">atau Gunakan Email</span>
+          <span className="mx-3 text-gray-400 text-sm">or Use Email</span>
           <hr className="flex-grow border-t border-gray-300" />
         </div>
 

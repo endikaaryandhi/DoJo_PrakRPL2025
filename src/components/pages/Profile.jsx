@@ -83,8 +83,8 @@ const Profile = () => {
       <section className="mb-4">
         <h1 className="text-2xl font-bold text-gray-800">Halo, {name}!</h1>
         <p className="text-gray-500">
-          Hari ini,{' '}
-          {new Date().toLocaleDateString('id-ID', {
+          Today,{' '}
+          {new Date().toLocaleDateString('en-US', {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
@@ -99,7 +99,7 @@ const Profile = () => {
         {/* Sidebar */}
         <aside className="w-1/4 border-r pr-4 space-y-4">
           <button className="w-full flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 text-left font-medium text-gray-700 hover:bg-gray-200 transition">
-            ✏️ Edit Profil
+            ✏️ Edit Profile
           </button>
           <button
             onClick={handleLogout}

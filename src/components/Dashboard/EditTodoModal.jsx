@@ -16,7 +16,7 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from('category').select('*');
       if (error) {
-        toast.error('Gagal mengambil kategori!');
+        toast.error('Failed to fetch category!');
       } else {
         setCategories(data);
       }
@@ -29,23 +29,23 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
     e.preventDefault();
 
     if (!todo.task_id) {
-      toast.error('ID Todo tidak tersedia!');
+      toast.error('Todo ID not available!');
       console.error('Missing task_id:', todo);
       return;
     }
 
     if (!title.trim()) {
-      toast.error('Judul tidak boleh kosong!');
+      toast.error('Title cannot be empty!');
       return;
     }
 
     if (!date || !time) {
-      toast.error('Tanggal dan waktu harus diisi!');
+      toast.error('Date and time must be filled in!');
       return;
     }
 
     if (!categoryId) {
-      toast.error('Kategori harus dipilih!');
+      toast.error('Category must be selected!');
       return;
     }
 
@@ -63,9 +63,9 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
 
     if (error) {
       console.error('Error updating todo:', error);
-      toast.error('Gagal update todo!');
+      toast.error('Failed to update todo!');
     } else {
-      toast.success('Todo berhasil diupdate!');
+      toast.success('Todo updated successfully!');
       onTodoUpdated();
       onClose();
     }
@@ -75,34 +75,34 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
         <h2 className="text-2xl font-semibold text-indigo-600 mb-6 flex items-center gap-2">
-          ✏️ Edit Todo
+          ✏️ Todo Edit
         </h2>
         <form onSubmit={handleUpdateTodo} className="space-y-5 text-sm">
           <div>
-            <label className="block text-gray-600 mb-1">Judul</label>
+            <label className="block text-gray-600 mb-1">Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
               className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none"
-              placeholder="Judul Todo"
+              placeholder="Todo Title"
             />
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Deskripsi</label>
+            <label className="block text-gray-600 mb-1">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Deskripsi (opsional)"
+              placeholder="Description (opsional)"
               className="w-full border border-gray-300 px-4 py-2 rounded-lg resize-none focus:ring-2 focus:ring-indigo-300 focus:outline-none"
               rows={3}
             />
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Kategori</label>
+            <label className="block text-gray-600 mb-1">Category</label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
@@ -117,7 +117,7 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Prioritas</label>
+            <label className="block text-gray-600 mb-1">Priority</label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
@@ -130,12 +130,12 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Waktu</label>
+            <label className="block text-gray-600 mb-1">Time</label>
             <TimePicker onTimeChange={setTime} initialTime={time} />
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Tanggal</label>
+            <label className="block text-gray-600 mb-1">Date</label>
             <input
               type="date"
               value={date}
@@ -150,13 +150,13 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
               onClick={onClose}
               className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
             >
-              Simpan
+              Save
             </button>
           </div>
         </form>
