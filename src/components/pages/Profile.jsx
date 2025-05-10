@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
-import { toast } from 'react-hot-toast';
+import {toast } from 'react-hot-toast';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -64,6 +64,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-8">
+
       {/* Header */}
       <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
         <Link to="/home">

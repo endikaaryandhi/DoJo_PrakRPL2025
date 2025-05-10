@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
-import { Toaster, toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import AddTodoForm from '../Dashboard/AddTodoForm';
 import EditTodoModal from '../Dashboard/EditTodoModal';
 import LoadingSpinner from '../LoadingSpinner';
@@ -125,7 +125,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-4">
-      <Toaster />
 
       {/* Header */}
       <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
@@ -149,7 +148,7 @@ const Home = () => {
       {/* Greeting */}
       <section className="mb-4">
         <h1 className="text-2xl font-bold text-gray-800">
-          Halo, {user?.user_metadata?.full_name || user?.email || 'Pengguna'}!
+          Halo, {user?.user_metadata?.full_name || user?.email || ''}!
         </h1>
         <p className="text-gray-500">
           Hari ini, {new Date().toLocaleDateString('id-ID', {
@@ -165,33 +164,33 @@ const Home = () => {
       <section className="mb-6">
         <AddTodoForm onTodoAdded={fetchTodos} categories={categories} userId={user?.id} />
 
-        <div className="mt-2 flex justify-between items-center flex-wrap gap-2">
-          <div className="flex items-center gap-3">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer"
-            >
-              <option value="all">Semua</option>
-              <option value="pending">Belum Selesai</option>
-              <option value="completed">Selesai</option>
-            </select>
+        <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer w-full sm:w-auto"
+          >
+            <option value="all">Semua</option>
+            <option value="pending">Belum Selesai</option>
+            <option value="completed">Selesai</option>
+          </select>
 
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer"
-            >
-              <option value="none">Urutkan: Default</option>
-              <option value="asc">Prioritas: High → Low</option>
-              <option value="desc">Prioritas: Low → High</option>
-            </select>
-          </div>
-
-          <div className="ml-auto w-fit bg-[#a5d8e1] text-white text-sm font-medium px-4 py-1 rounded-full shadow">
-            Tugas : {todos.length}
-          </div>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer w-full sm:w-auto"
+          >
+            <option value="none">Urutkan: Default</option>
+            <option value="asc">Prioritas: High → Low</option>
+            <option value="desc">Prioritas: Low → High</option>
+          </select>
         </div>
+
+        <div className="sm:ml-auto w-full sm:w-fit bg-[#a5d8e1] text-white text-sm font-medium px-4 py-1 rounded-full shadow whitespace-nowrap">
+          Tugas : {todos.length}
+        </div>
+      </div>
       </section>
 
       {/* Todo List */}
@@ -222,90 +221,82 @@ const Home = () => {
 
                 {!hiddenCategories.has(category.name) && filteredTodos.length > 0 && (
                   <ul className="space-y-3">
-                    {filteredTodos.map((todo) => (
-                      <li
-                        key={todo.task_id}
-                        className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4"
-                            checked={todo.status === 'completed'}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              handleCheckboxChange(todo.task_id, todo.status);
-                            }}
-                          />
-
-                          <span className={`text-sm font-medium ${todo.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                            {todo.title}
+                  {filteredTodos.map((todo) => (
+                    <li
+                      key={todo.task_id}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-white px-4 py-3 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50"
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4"
+                          checked={todo.status === 'completed'}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleCheckboxChange(todo.task_id, todo.status);
+                          }}
+                        />
+                        <span className={`text-sm font-medium ${todo.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                          {todo.title}
+                        </span>
+                        {todo.category?.name && (
+                          <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-semibold capitalize">
+                            {todo.category.name}
                           </span>
+                        )}
+                        {todo.priority && (
+                          <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md font-semibold capitalize">
+                            {todo.priority}
+                          </span>
+                        )}
+                      </div>
 
-                          {todo.category?.name && (
-                            <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-semibold capitalize">
-                              {todo.category.name}
-                            </span>
-                          )}
-
-                          {todo.priority && (
-                            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md font-semibold capitalize">
-                              {todo.priority}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          {todo.due_date && (
-                            <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.due_date}</span>
-                          )}
-                          {todo.due_time && (
-                            <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.due_time}</span>
-                          )}
-
-                           {/* Task Detail Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleShowTaskDetail(todo); // Menampilkan modal detail tugas
-                            }}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
-                          >
-                            📋 Detail
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedTodo({
-                                task_id: todo.task_id,
-                                title: todo.title,
-                                description: todo.description,
-                                due_date: todo.due_date,
-                                due_time: todo.due_time,
-                                priority: todo.priority,
-                                category_id: todo.category_id || todo.category?.category_id,
-                              });
-                            }}
-                            className="bg-sky-500 hover:bg-sky-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
-                          >
-                            ✏ Edit
-                          </button>
-
-                          {/* Delete Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setTodoToDelete(todo.task_id);
-                            }}
-                            className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
-                          >
-                            🗑 Hapus
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                      <div className="flex flex-wrap gap-2 text-sm text-gray-500 justify-start sm:justify-end">
+                        {todo.due_date && (
+                          <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.due_date}</span>
+                        )}
+                        {todo.due_time && (
+                          <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.due_time}</span>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShowTaskDetail(todo);
+                          }}
+                          className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                        >
+                          📋 Detail
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTodo({
+                              task_id: todo.task_id,
+                              title: todo.title,
+                              description: todo.description,
+                              due_date: todo.due_date,
+                              due_time: todo.due_time,
+                              priority: todo.priority,
+                              category_id: todo.category_id || todo.category?.category_id,
+                            });
+                          }}
+                          className="bg-sky-500 hover:bg-sky-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                        >
+                          ✏ Edit
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTodoToDelete(todo.task_id);
+                          }}
+                          className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1"
+                        >
+                          🗑 Hapus
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
                 )}
               </div>
             );
