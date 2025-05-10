@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
-import { toast } from 'react-hot-toast';
+import {toast } from 'react-hot-toast';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Profile = () => {
       const user = data?.user;
 
       if (error || !user) {
-        toast.error('User tidak ditemukan');
+        toast.error('User not found');
         navigate('/login');
         return;
       }
@@ -33,7 +33,7 @@ const Profile = () => {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error('Gagal logout!');
+      toast.error('Failed logout!');
     } else {
       navigate('/login');
     }
@@ -43,7 +43,7 @@ const Profile = () => {
     e.preventDefault();
 
     if (!userId) {
-      toast.error('User belum dimuat!');
+      toast.error('User not loaded yet!');
       return;
     }
 
@@ -56,14 +56,15 @@ const Profile = () => {
     });
 
     if (error) {
-      toast.error('Gagal menyimpan perubahan');
+      toast.error('Failed to save changes');
     } else {
-      toast.success('Profil berhasil diperbarui!');
+      toast.success('Profile updated successfully!');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 pt-24 pb-8">
+
       {/* Header */}
       <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow fixed top-0 left-0 right-0 z-50">
         <Link to="/home">
@@ -125,7 +126,7 @@ const Profile = () => {
           {/* Form */}
           <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-700 mb-1">Nama</label>
+              <label className="block text-sm text-gray-700 mb-1">Name</label>
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -138,14 +139,14 @@ const Profile = () => {
               <label className="block text-sm text-gray-700 mb-1">Email</label>
               <input
                 type="email"
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100 cursor-not-allowed"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                readOnly
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">Password Baru</label>
+              <label className="block text-sm text-gray-700 mb-1">New Password</label>
               <input
                 type="password"
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -158,7 +159,7 @@ const Profile = () => {
               type="submit"
               className="bg-sky-500 text-white px-6 py-2 rounded-md hover:bg-sky-600 transition"
             >
-              Simpan
+              Save
             </button>
           </form>
         </main>

@@ -46,7 +46,7 @@ const LoginForm = () => {
         className="w-full h-10 px-5 py-2 rounded-2xl border border-gray-300 bg-gray-100 text-sm"
         required
       />
-      <button type="submit">Masuk</button>
+      <button type="submit">Login</button>
     </form>
   );
 };

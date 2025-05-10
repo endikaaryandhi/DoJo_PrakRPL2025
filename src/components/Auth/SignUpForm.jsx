@@ -39,7 +39,7 @@ const SignUpForm = () => {
       {/* Input Full Name */}
       <input
         type="text"
-        placeholder="Nama"
+        placeholder="Name"
         value={fullName} 
         onChange={(e) => setFullName(e.target.value)}
         className="w-full h-10 px-5 py-2 rounded-2xl border border-gray-300 bg-gray-100 text-sm"
@@ -67,7 +67,7 @@ const SignUpForm = () => {
       />
       
       {/* Tombol Submit */}
-      <button type="submit">Lanjut</button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 };

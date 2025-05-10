@@ -28,6 +28,17 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
   const handleUpdateTodo = async (e) => {
     e.preventDefault();
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) {
+      toast.error('Deadline must be after today!');
+      return;
+    }
+
     if (!todo.task_id) {
       toast.error('Todo ID not available!');
       console.error('Missing task_id:', todo);
@@ -130,12 +141,12 @@ const EditTodoModal = ({ todo, onClose, onTodoUpdated }) => {
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Time</label>
+            <label className="block text-gray-600 mb-1">Deadline Time</label>
             <TimePicker onTimeChange={setTime} initialTime={time} />
           </div>
 
           <div>
-            <label className="block text-gray-600 mb-1">Date</label>
+            <label className="block text-gray-600 mb-1">Deadline Date</label>
             <input
               type="date"
               value={date}

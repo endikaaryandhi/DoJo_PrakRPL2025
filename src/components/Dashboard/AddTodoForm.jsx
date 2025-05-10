@@ -59,6 +59,16 @@ const AddTodoForm = ({ onTodoAdded }) => {
       return;
     }
 
+    const today = new Date();
+    const selectedDate = new Date(dueDate);
+    today.setHours(0,0,0,0);
+    selectedDate.setHours(0,0,0,0);
+
+    if (selectedDate <= today) {
+      toast.error('Deadline must be after today!');
+      return;
+    }
+
     const { error } = await supabase.from('task').insert([{
       title,
       category_id: categoryId,
@@ -126,7 +136,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
         onChange={(e) => setCategoryId(e.target.value)}
         className="flex-1 min-w-[150px] px-2 py-1 border rounded text-sm"
       >
-        <option value="" disabled selected>Pilih Kategori</option>
+        <option value="" disabled selected>Category</option>
         {categories.map((cat) => (
           <option key={cat.category_id} value={cat.category_id}>
             {cat.name}
@@ -139,7 +149,7 @@ const AddTodoForm = ({ onTodoAdded }) => {
         onChange={(e) => setPriority(e.target.value)}
         className="flex-1 min-w-[120px] px-2 py-1 border rounded text-sm"
       >
-        <option value="" disabled selected>Pilih Prioritas</option>
+        <option value="" disabled selected>Priority</option>
         <option value="high">High</option>
         <option value="medium">Medium</option>
         <option value="low">Low</option>
