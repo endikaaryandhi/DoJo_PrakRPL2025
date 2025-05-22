@@ -181,7 +181,7 @@ const Home = () => {
             onChange={(e) => setSortOrder(e.target.value)}
             className="text-sm bg-[#a5d8e1] text-white px-4 py-1 rounded-full shadow appearance-none cursor-pointer w-full sm:w-auto"
           >
-            <option value="none">Soft: Default</option>
+            <option value="none">Sort: Default</option>
             <option value="asc">Priority: High → Low</option>
             <option value="desc">Priority: Low → High</option>
           </select>

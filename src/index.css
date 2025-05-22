@@ -8,6 +8,10 @@
   100% { background-position: 0% 50%; }
 }
 
+body {
+  @apply font-sans;
+}
+
 .login-page, .signup-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #74ebd5, #acb6e5, #fbc2eb, #f6d365);
